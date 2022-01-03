@@ -3,9 +3,11 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import {addList, state} from "./state/state";
+import {addList, addTaskWithID, state, tasks} from "./state/state";
 
 ReactDOM.render(<App
     state={state}
+    tasks={tasks}
+    addTaskWithID={addTaskWithID}
 />,  document.getElementById('root'));
 

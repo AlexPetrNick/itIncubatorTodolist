@@ -2,11 +2,13 @@ import React, {FC, useState, MouseEvent, ChangeEvent, useEffect} from 'react';
 import './App.css';
 import {TodoList} from "./common/TodoList";
 import s from './Todolost.module.css'
-import {addList, stateType, todolistsType} from "./state/state";
+import {addList, addTaskWithID, stateType, tasksObjectType, todolistsType} from "./state/state";
 import {v1} from "uuid";
 
 type AppType = {
     state: stateType
+    tasks: tasksObjectType
+    addTaskWithID: (titleID:string) => void
 }
 
 let App: FC<AppType> = (props) => {
@@ -17,8 +19,12 @@ let App: FC<AppType> = (props) => {
         setListTasks(listTasks.filter(data => data.uuid !== uuid))
     }
     const onClickAddListCallback = (e: MouseEvent<HTMLButtonElement>) => {
-        const newList = {uuid: v1(), title: stateTitle, tasks: []}
-        if (stateTitle) setListTasks([...listTasks, newList])
+        const tempUuid = v1()
+        const newList:todolistsType = {uuid: tempUuid, title: stateTitle, filter: "all"}
+        if (stateTitle) {
+            setListTasks([...listTasks, newList])
+            props.addTaskWithID(tempUuid)
+        }
         setStateTitle('')
     }
     const onChangeInputCallback = (e: ChangeEvent<HTMLInputElement>) => {
@@ -27,10 +33,11 @@ let App: FC<AppType> = (props) => {
 
 
     const todoListArray = listTasks.map((todos) => {
+        const tasksForTodoList = props.tasks[todos.uuid]
         return (
             <TodoList
                 uuid={todos.uuid}
-                initTasks={todos.tasks}
+                initTasks={tasksForTodoList}
                 title={todos.title}
                 onClickRemoveList={onClickRemoveList}
             />
