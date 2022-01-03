@@ -6,28 +6,19 @@ export type TasksType = {
     isDone: boolean
 }
 export type filterValuesType = "all" | "completed" | "active"
-
 export type todolistsType = {
     uuid: string
     title: string
     filter: filterValuesType
 }
-
 export type stateType = {
     todolists:Array<todolistsType>
 }
-
 export type tasksObjectType = {
     [key:string] : Array<TasksType>
 }
-
-
 export const addList = (list:todolistsType) => state.todolists.push(list)
-
-
 const todotasks1:string = "d88f5344-64a8-11ec-90d6-0242ac120003"
-
-
 export let state:stateType = {
     todolists: [
         {
@@ -37,13 +28,6 @@ export let state:stateType = {
         }
     ]
 }
-
-export const addTaskWithID = (idTasks:string) => {
-    const tasksCopy = {...tasks}
-    tasksCopy[idTasks] = []
-    tasks = {...tasksCopy}
-}
-
 
 export let tasks:tasksObjectType = {
     [todotasks1]: [
