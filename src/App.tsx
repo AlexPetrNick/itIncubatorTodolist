@@ -2,19 +2,18 @@ import React, {ChangeEvent, FC, MouseEvent, useState} from 'react';
 import './App.css';
 import {TodoList} from "./common/TodoList";
 import s from './Todolost.module.css'
-import {stateType, tasksObjectType, todolistsType} from "./state/state";
+import {filterValuesType, stateType, tasksObjectType, todolistsType} from "./state/state";
 import {v1} from "uuid";
 
 type AppType = {
     state: stateType
     tasks: tasksObjectType
-    addTaskWithID: (titleID:string) => void
 }
 
 let App: FC<AppType> = (props) => {
     const [listTasks, setListTasks] = useState<Array<todolistsType>>(props.state.todolists)
-    const [stateTitle, setStateTitle] = useState<string>('')
     const [tasks, setTasks] = useState<tasksObjectType>(props.tasks)
+    const [stateTitle, setStateTitle] = useState<string>('')
 
     const onClickRemoveList = (e:MouseEvent<HTMLButtonElement>, uuid: string) => {
         setListTasks(listTasks.filter(data => data.uuid !== uuid))
@@ -34,18 +33,26 @@ let App: FC<AppType> = (props) => {
         setStateTitle(e.currentTarget.value)
     }
 
+    const changeFilter = (value: filterValuesType, todoListId: string) => {
+        setListTasks(listTasks.map(l => l.uuid === todoListId ? {...l, filter: value} : l))
+    }
+
 
     const todoListArray = listTasks.map((todos) => {
-        const tasksForTodoList = tasks[todos.uuid]
+        let tasksForTodoList = tasks[todos.uuid]
+        if (todos.filter === "active") tasksForTodoList = tasksForTodoList.filter(t => !t.isDone)
+        if (todos.filter === "completed") tasksForTodoList = tasksForTodoList.filter(t => t.isDone)
+        console.log(tasksForTodoList)
         return (
             <TodoList
-                uuid={todos.uuid}
-                initTasks={tasksForTodoList}
-                title={todos.title}
+                tasks={tasksForTodoList}
                 onClickRemoveList={onClickRemoveList}
+                currentTodoList={todos}
+                changeFilter={changeFilter}
             />
         )
     })
+
     return (
         <div className="App">
             <div className={s.header}>

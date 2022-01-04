@@ -1,39 +1,30 @@
-import React, {MouseEvent, KeyboardEvent, Dispatch, FC, SetStateAction, useState, useEffect, ChangeEvent} from "react";
+import React, {MouseEvent, KeyboardEvent, FC, useState, ChangeEvent} from "react";
 import s from '../Todolost.module.css'
 import {v1} from "uuid";
 import {filterValuesType, TasksType, todolistsType} from "../state/state";
 
-type TodoListType = {
-    title: string
-    initTasks: Array<TasksType>
-    uuid: string
-    onClickRemoveList: (e: MouseEvent<HTMLButtonElement>, uuid: string) => void
-}
-const toUpperFirst = (word: string): string => {
-    return word[0].toUpperCase() + word.slice(1);
-}
+const toUpperFirst = (word: string): string =>  word[0].toUpperCase() + word.slice(1)
 const arrayBt: Array<filterValuesType> = ["all", "active", "completed"]
+const errorText = `Поле не может быть пустым`
 
-type eChangeCheckBox = ChangeEvent<HTMLInputElement> | MouseEvent<HTMLDivElement>
+type TodoListType = {
+    tasks: Array<TasksType>
+    onClickRemoveList: (e: MouseEvent<HTMLButtonElement>, uuid: string) => void
+    currentTodoList: todolistsType
+    changeFilter: (value: filterValuesTywatpe, todoListId: string) => void
+}
 
-export const TodoList: FC<TodoListType> = (props) => {
-    const errorText = `Поле не может быть пустым`
-    const [tasks, setTasks] = useState<Array<TasksType>>(props.initTasks)
+export const TodoList: FC<TodoListType> = ({tasks,changeFilter, currentTodoList, ...props}) => {
     const [title, setTitle] = useState<string>('')
-    const [filter, setFilter] = useState<filterValuesType>("all")
     const [error, setError] = useState<boolean>(false)
 
     const onChangeRadioCallback = (id: string, isDone: boolean): void => {
         setTasks(tasks.map((task: TasksType) => task.id === id ? {...task, isDone} : task))
     }
+
     const removeTasks = (id: string) => setTasks(tasks.filter((data: TasksType) => data.id !== id))
-    const filtringTasks = (tasks: Array<TasksType>): Array<TasksType> => {
-        let filterTasks = tasks
-        if (filter === 'completed') filterTasks = tasks.filter((data: TasksType) => data.isDone)
-        if (filter === 'active') filterTasks = tasks.filter((data: TasksType) => !data.isDone)
-        return filterTasks
-    }
-    const tasksElements = filtringTasks(tasks).map((d: TasksType, i: number) => {
+
+    const tasksElements = tasks.map((d: TasksType, i: number) => {
         const style = i % 2 === 0 ? `${s.li__task} ${s.back__white}` : s.li__task
         const changeStatus = (e: ChangeEvent<HTMLInputElement>) => onChangeRadioCallback(d.id, e.currentTarget.checked)
         return (
@@ -50,31 +41,29 @@ export const TodoList: FC<TodoListType> = (props) => {
         )
     })
     const btFilter = arrayBt.map((word: filterValuesType) => {
-        const stl = filter === word ? `${s.bt__filter} ${s.bt__bc__green}` : s.bt__filter
-        return <button className={stl} onClick={() => setFilter(word)}>{toUpperFirst(word)}</button>
+        const stl = currentTodoList.filter === word ? `${s.bt__filter} ${s.bt__bc__green}` : s.bt__filter
+        return <button className={stl} onClick={() => changeFilter(word, currentTodoList.uuid)}>{toUpperFirst(word)}</button>
     })
-    const onKeyPressHandler = (e: KeyboardEvent<HTMLInputElement>) => {
-        if (e.charCode === 13) addTask()
-    }
+    const onKeyPressHandler = (e: KeyboardEvent<HTMLInputElement>) => e.charCode === 13 ? addTask() : null
     const addTask = () => {
         const trimTitle = title.trim()
         if (trimTitle) {
             setTasks([...tasks, {id: v1(), title: trimTitle, isDone: false}])
+            setTitle("")
         } else {
             setError(true)
         }
-        setTitle("")
     }
+
     const onChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
         setTitle(e.currentTarget.value)
         setError(false)
     }
 
-
     return (
         <div className={s.wrapper__todolist__list}>
             <div className={s.title__list__task}>
-                <b>{props.title}</b>
+                <b>{currentTodoList.title}</b>
             </div>
             <div>
                 <input
@@ -97,7 +86,7 @@ export const TodoList: FC<TodoListType> = (props) => {
                 </div>
                 <div>
                     <button
-                        onClick={(e) => props.onClickRemoveList(e, props.uuid)}
+                        onClick={(e) => props.onClickRemoveList(e, currentTodoList.uuid)}
                         className={s.delete__list}
                     >Delete
                     </button>
