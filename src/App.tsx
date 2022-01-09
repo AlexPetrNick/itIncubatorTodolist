@@ -19,15 +19,10 @@ let App: FC<AppType> = (props) => {
         setListTasks(listTasks.filter(data => data.uuid !== uuid))
         delete tasks[uuid]
     }
-    const addList = (title:string) => {
+    const addList = (title: string) => {
         const tempUuid = v1()
-        const newList: todolistsType = {uuid: tempUuid, title: title, filter: "all"}
-        if (title) {
-            const tasksCopy = {...tasks}
-            tasksCopy[tempUuid] = []
-            setTasks(tasksCopy)
-            setListTasks([...listTasks, newList])
-        }
+        setTasks({...tasks, [tempUuid]: []})
+        setListTasks([...listTasks, {uuid: tempUuid, title: title, filter: "all"}])
     }
     const changeFilter = (value: filterValuesType, todoListId: string) => {
         setListTasks(listTasks.map(l => l.uuid === todoListId ? {...l, filter: value} : l))
@@ -48,6 +43,7 @@ let App: FC<AppType> = (props) => {
         if (todos.filter === "completed") tasksForTodoList = tasksForTodoList.filter(t => t.isDone)
         return (
             <TodoList
+                key={Math.random()}
                 tasks={tasksForTodoList}
                 onClickRemoveList={onClickRemoveList}
                 currentTodoList={todos}

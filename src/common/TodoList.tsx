@@ -40,10 +40,19 @@ export const TodoList: FC<TodoListType> = ({tasks,changeFilter, currentTodoList,
     })
     const btFilter = arrayBt.map((word: filterValuesType) => {
         const stl = currentTodoList.filter === word ? `${s.bt__filter} ${s.bt__bc__green}` : s.bt__filter
-        return <button className={stl} onClick={() => changeFilter(word, uuidTodo)}>{toUpperFirst(word)}</button>
+        return (
+            <button
+                key={Math.random()}
+                className={stl}
+                onClick={() => changeFilter(word, uuidTodo)}
+            >{toUpperFirst(word)}</button>
+            )
+
     })
     const removeListCallback = (e:MouseEvent<HTMLButtonElement>) => props.onClickRemoveList(e, uuidTodo)
     const addTaskCallback = (title:string) => addTask(uuidTodo,title)
+
+    const allCompleted = ():boolean => tasks.every(t => t.isDone)
 
     return (
         <div className={s.wrapper__todolist__list}>
@@ -67,6 +76,10 @@ export const TodoList: FC<TodoListType> = ({tasks,changeFilter, currentTodoList,
                     <button onClick={removeListCallback} className={s.delete__list}>Delete</button>
                 </div>
             </div>
+            {allCompleted() && <div className={s.completed__todolist}><i>ALL COMPLETED</i></div>}
         </div>
     )
 }
+
+
+
