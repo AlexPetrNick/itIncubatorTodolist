@@ -29,7 +29,8 @@
 
 .window__todolists {
     margin-top: 30px;
-    width: 1180px;
+    max-width: 1180px;
+    width: auto;
     height: auto;
     flex-wrap: wrap;
     justify-content: flex-start;
