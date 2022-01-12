@@ -12,6 +12,8 @@ type AppType = {
 }
 
 let App: FC<AppType> = (props) => {
+    //@ts-ignore
+    window.store = props.tasks
     const [listTasks, setListTasks] = useState<Array<todolistsType>>(props.state.todolists)
     const [tasks, setTasks] = useState<tasksObjectType>(props.tasks)
 
@@ -37,10 +39,21 @@ let App: FC<AppType> = (props) => {
         setTasks({...tasks, [uuid]: [...tasks[uuid], {id: v1(), title, isDone: false}]})
     }
 
+    const updateTask = (uuidTodolist:string, uuidTask:string, title:string) => {
+        setTasks({...tasks, [uuidTodolist]:tasks[uuidTodolist].map((t)=>t.id === uuidTask ? {...t, title} : t)})
+    }
+
+    const updateTitleTodolist = (uuidTodolist:string, title:string) => {
+        setListTasks(listTasks.map((l) => l.uuid === uuidTodolist ? {...l, title} : l))
+    }
+
     const todoListArray = listTasks.map((todos) => {
+        let isCompleted:boolean = false
+        let tasksAll = tasks[todos.uuid]
         let tasksForTodoList = tasks[todos.uuid]
         if (todos.filter === "active") tasksForTodoList = tasksForTodoList.filter(t => !t.isDone)
         if (todos.filter === "completed") tasksForTodoList = tasksForTodoList.filter(t => t.isDone)
+        if (tasksAll.every(t => t.isDone) && tasksAll.length !== 0 && tasksForTodoList.length === tasksAll.length) isCompleted=true
         return (
             <TodoList
                 key={Math.random()}
@@ -51,6 +64,9 @@ let App: FC<AppType> = (props) => {
                 changeCheckBoxTask={changeCheckBoxTask}
                 removeTask={removeTask}
                 addTask={addTask}
+                isCompleted={isCompleted}
+                updateTask={updateTask}
+                updateTitleTodolist={updateTitleTodolist}
             />
         )
     })
