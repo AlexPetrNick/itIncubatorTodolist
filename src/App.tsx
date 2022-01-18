@@ -77,7 +77,7 @@ let App: FC<AppType> = (props) => {
                 <AddNewForm
                     textPlaceholder={'Введите название нового листа'}
                     textError={'Поле не может быть пустым'}
-                    textButton={'Добавить лист'}
+                    textButton={'Добавить'}
                     addOnClick={addList}
                 />
             </div>

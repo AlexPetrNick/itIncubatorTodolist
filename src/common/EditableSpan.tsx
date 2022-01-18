@@ -1,4 +1,4 @@
-import React, {FC, useState, FocusEventHandler, MouseEvent, ChangeEvent} from "react";
+import React, {ChangeEvent, FC, MouseEvent, useState} from "react";
 import s from "../Todolost.module.css";
 
 type propsType = {
@@ -28,6 +28,7 @@ export const EditableSpan:FC<propsType> = (props) => {
                     onBlur={onBlurClickHandler}
                     onChange={setInputHandler}
                     value={title}
+                    autoFocus
                 /> :
                 <span
                     className={s.title__tasks}

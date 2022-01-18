@@ -66,7 +66,7 @@
 }
 
 .input__tasks {
-    width: 310px;
+    width: 250px;
 }
 
 .ul__tasks {
@@ -87,8 +87,9 @@
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    font-size: 13px;
+    font-size: 10px;
     text-shadow: 0 0 2px red;
+    margin-bottom: -6px;
 }
 
 .field__message {
@@ -199,4 +200,15 @@
     font-size: 35px;
     transform: rotate(-25deg);
     text-shadow: 0 0 5px white;
+}
+
+.wrapper_add_new_form {
+    display: flex;
+    justify-content: space-between;
+    max-width: 350px;
+    max-height: 40px;
+}
+
+.wrapper_input_add_new_form {
+    margin-bottom: 10px;
 }
